@@ -1,4 +1,5 @@
-﻿using NewHorizons.Components.Orbital;
+﻿using NewHorizons;
+using NewHorizons.Components.Orbital;
 using OWML.Common;
 using OWML.ModHelper;
 using System.Collections.Generic;
@@ -11,9 +12,28 @@ namespace JamHub
         private static string jsonStr =
             "{\r\n        \"parentPath\": \"Sector/jamplanet/computer_area/mod_computer/Capsule\",\r\n        \"rename\": \"computer_dialogue\",\r\n        \"isRelativeToParent\": true,\r\n        \"radius\": 0.5,\r\n        \"range\": 2\r\n      }";
 
+        public static bool IsInValidSystem() => IsInValidSystem(JamHub.instance.newHorizons.GetCurrentStarSystem());
+
+        public static bool IsInValidSystem(string s)
+        {
+            if (s.Equals("Jam3") || s.Equals("Jam5"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static bool IsFactRevealed(string id)
+        {
+            return (PlayerData.GetShipLogFactSave(id)?.revealOrder ?? -1) > -1;
+        }
+
         public static void PrepSystem(string s)
         {
-            if(!s.Equals("Jam3"))
+            if(!IsInValidSystem(s))
             {
                 JamHub.DebugPrint("Not in jam system, aborting prep");
                 return;
@@ -61,9 +81,21 @@ namespace JamHub
                 animator.transform.localScale = new Vector3(xScale, 1, 1);
 
                 //If it's nebula, set up the vanish event
-                if(animator.transform.parent.name.Equals("Nebula"))
+                if (animator.transform.parent.name.Equals("Nebula"))
                 {
                     animator.transform.parent.gameObject.AddComponent<NebulaVanisher>();
+                }
+
+                //If it's trifid, set up their controller
+                if (animator.transform.parent.name.Equals("Trifid"))
+                {
+                    animator.transform.parent.gameObject.AddComponent<TrifidController>();
+                }
+
+                //If it's piggy, set up their controller
+                if (animator.transform.parent.name.Equals("MegaPiggy"))
+                {
+                    animator.transform.parent.gameObject.AddComponent<MegaPiggyController>();
                 }
             }
 

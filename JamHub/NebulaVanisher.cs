@@ -9,7 +9,7 @@ namespace JamHub
 {
     public class NebulaVanisher : MonoBehaviour
     {
-        private CharacterDialogueTree dialogue;
+        [SerializeField] private CharacterDialogueTree dialogue;
         private bool sinking = false;
 
         /**
@@ -17,7 +17,7 @@ namespace JamHub
          */
         private void Awake()
         {
-            dialogue = GetComponentInChildren<CharacterDialogueTree>();
+            if (dialogue == null) dialogue = GetComponentInChildren<CharacterDialogueTree>();
             dialogue.OnEndConversation += Sink;
         }
 
